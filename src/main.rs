@@ -2,7 +2,7 @@
 //!
 //! **[Crates.io](https://crates.io/crates/cargo-print) │ [Repo](https://github.com/alecmocatta/cargo-print)**
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.1")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
