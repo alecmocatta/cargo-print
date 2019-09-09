@@ -34,8 +34,10 @@ fn main() {
 		match &*arg {
 			"--no-default-features" => opt_no_default_features = true,
 			"--features" => {
-				if let Some(next) = args.next() {
-					let _ = opt_features.insert(next);
+				if let Some(features) = args.next() {
+					for feature in features.split(' ').filter(|feature| !feature.is_empty()) {
+						let _ = opt_features.insert(feature.to_owned());
+					}
 				} else {
 					error = true
 				}
