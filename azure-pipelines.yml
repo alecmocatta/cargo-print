@@ -13,7 +13,7 @@ jobs:
   parameters:
     default:
       rust_toolchain: stable nightly
-      rust_lint_toolchain: nightly-2019-07-19
+      rust_lint_toolchain: nightly-2019-09-05
       rust_flags: ''
       rust_features: ''
       rust_target_check: ''
