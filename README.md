@@ -1,26 +1,19 @@
-# template-rust
+# cargo-print
 
-[![Crates.io](https://img.shields.io/crates/v/template-rust.svg?maxAge=86400)](https://crates.io/crates/template-rust)
-[![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/template-rust.svg?maxAge=2592000)](#License)
-[![Build Status](https://dev.azure.com/alecmocatta/template-rust/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/template-rust/_build/latest?branchName=master)
+[![Crates.io](https://img.shields.io/crates/v/cargo-print.svg?maxAge=86400)](https://crates.io/crates/cargo-print)
+[![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/cargo-print.svg?maxAge=2592000)](#License)
+[![Build Status](https://dev.azure.com/alecmocatta/cargo-print/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/cargo-print/_build/latest?branchName=master)
 
-[Docs](https://docs.rs/template-rust/0.1.0)
+[Docs](https://docs.rs/cargo-print/0.1.0)
 
-A template Rust library crate.
+A cargo subcommand to print information in a shell-convenient format.
 
-This is template for Rust libraries, comprising a [`hello_world()`](https://docs.rs/template-rust/0.1.0/template_rust/fn.hello_world.html) function.
+Can be installed and run like so:
 
-## Example
-
-```rust
-use template_rust::hello_world;
-
-hello_world();
+```text
+cargo install cargo-print
+cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]
 ```
-
-## Note
-
-Caveat emptor.
 
 ## License
 Licensed under either of
