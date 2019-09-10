@@ -2,7 +2,7 @@
 //!
 //! **[Crates.io](https://crates.io/crates/cargo-print) │ [Repo](https://github.com/alecmocatta/cargo-print)**
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.2")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
@@ -14,7 +14,7 @@
 	unused_results,
 	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
-#![allow(clippy::useless_let_if_seq, clippy::if_not_else)]
+#![allow(clippy::if_not_else)]
 
 use cargo_metadata::{CargoOpt, MetadataCommand};
 use std::{
@@ -23,13 +23,109 @@ use std::{
 
 fn main() {
 	let mut args = env::args().skip(2);
+	match args.next().as_ref().map(String::as_str) {
+		Some("examples") => print_examples(args),
+		Some("publish") => print_publish(args),
+		Some("package") => print_package(args),
+		_ => {
+			eprintln!("USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish");
+			process::exit(1);
+		}
+	}
+}
+
+fn print_package(mut args: impl Iterator<Item = String>) {
+	if args.next().is_some() {
+		eprintln!("USAGE:\n    cargo print package");
+		process::exit(1);
+	}
+	let current_dir = env::current_dir().unwrap();
+	let current_manifest = current_dir.join("Cargo.toml");
+	let metadata = MetadataCommand::new().exec().unwrap();
+	let package = metadata
+		.packages
+		.into_iter()
+		.filter(|package| package.manifest_path == current_manifest)
+		.collect::<Vec<_>>();
+	if package.len() > 1 {
+		panic!("We seem to be in > 1 package {:?}", package);
+	}
+	if package.is_empty() {
+		panic!("We don't seem to be in a package");
+	}
+	let package = package.into_iter().next().unwrap();
+	println!("{}", package.name);
+}
+
+fn print_publish(mut args: impl Iterator<Item = String>) {
+	if args.next().is_some() {
+		eprintln!("USAGE:\n    cargo print publish");
+		process::exit(1);
+	}
+	let metadata = MetadataCommand::new().exec().unwrap();
+	let members = metadata
+		.workspace_members
+		.into_iter()
+		.collect::<HashSet<_>>();
+	let members = metadata
+		.packages
+		.into_iter()
+		.filter_map(|package| {
+			if members.contains(&package.id) {
+				Some((package.name.clone(), package))
+			} else {
+				None
+			}
+		})
+		.collect::<HashMap<_, _>>();
+	let mut members: HashMap<String, HashSet<String>> = members
+		.iter()
+		.map(|(name, package)| {
+			(
+				name.clone(),
+				package
+					.dependencies
+					.iter()
+					.filter_map(|dep| {
+						if members.contains_key(&dep.name) {
+							Some(dep.name.clone())
+						} else {
+							None
+						}
+					})
+					.collect::<HashSet<String>>(),
+			)
+		})
+		.collect::<HashMap<_, _>>();
+	let mut dependents: HashMap<String, HashSet<String>> = HashMap::new();
+	for (package, dependencies) in &members {
+		for dependency in dependencies {
+			let _ = dependents
+				.entry(dependency.to_owned())
+				.or_insert_with(HashSet::new)
+				.insert(package.to_owned());
+		}
+	}
+	while !members.is_empty() {
+		let publish = members
+			.iter()
+			.find(|(_member, dependencies)| dependencies.is_empty())
+			.expect("circular dependencies")
+			.0
+			.clone();
+		println!("{}", publish);
+		let _ = members.remove(&publish).unwrap();
+		for dependent in dependents.get(&publish).unwrap_or(&HashSet::new()) {
+			let _ = members.get_mut(dependent).unwrap().remove(&publish);
+		}
+	}
+}
+
+fn print_examples(mut args: impl Iterator<Item = String>) {
 	let mut opt_no_default_features = false;
 	let mut opt_features = HashSet::new();
 	let mut opt_all_features = false;
 	let mut error = false;
-	if args.next().as_ref().map(String::as_str) != Some("examples") {
-		error = true;
-	}
 	while let Some(arg) = args.next() {
 		match &*arg {
 			"--no-default-features" => opt_no_default_features = true,
