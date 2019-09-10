@@ -2,7 +2,7 @@
 //!
 //! **[Crates.io](https://crates.io/crates/cargo-print) │ [Repo](https://github.com/alecmocatta/cargo-print)**
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.2")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.3")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
@@ -27,11 +27,35 @@ fn main() {
 		Some("examples") => print_examples(args),
 		Some("publish") => print_publish(args),
 		Some("package") => print_package(args),
+		Some("directory") => print_directory(args),
 		_ => {
-			eprintln!("USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish");
+			eprintln!("USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish\n    cargo print package\n    cargo print directory <package-name>");
 			process::exit(1);
 		}
 	}
+}
+
+fn print_directory(mut args: impl Iterator<Item = String>) {
+	let package_name = if let (Some(package_name), None) = (args.next(), args.next()) {
+		package_name
+	} else {
+		eprintln!("USAGE:\n    cargo print directory");
+		process::exit(1);
+	};
+	let metadata = MetadataCommand::new().exec().unwrap();
+	let package = metadata
+		.packages
+		.into_iter()
+		.filter(|package| package.name == package_name)
+		.collect::<Vec<_>>();
+	assert!(package.len() <= 1);
+	if package.is_empty() {
+		panic!("package {} not found", package_name);
+	}
+	let package = package.into_iter().next().unwrap();
+	let mut manifest_path = package.manifest_path;
+	let _ = manifest_path.pop();
+	println!("{}", manifest_path.display());
 }
 
 fn print_package(mut args: impl Iterator<Item = String>) {
