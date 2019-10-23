@@ -19,4 +19,4 @@ azure-devops = { project = "alecmocatta/cargo-print", pipeline = "tests" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-cargo_metadata = "0.8"
+cargo_metadata = "0.9"
