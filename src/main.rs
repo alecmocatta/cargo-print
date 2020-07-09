@@ -14,7 +14,7 @@
 	unused_results,
 	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
-#![allow(clippy::if_not_else)]
+#![allow(clippy::if_not_else, clippy::too_many_lines)]
 
 use cargo_metadata::{CargoOpt, MetadataCommand};
 use std::{
@@ -23,7 +23,7 @@ use std::{
 
 fn main() {
 	let mut args = env::args().skip(2);
-	match args.next().as_ref().map(String::as_str) {
+	match args.next().as_deref() {
 		Some("examples") => print_examples(args),
 		Some("publish") => print_publish(args),
 		Some("package") => print_package(args),
