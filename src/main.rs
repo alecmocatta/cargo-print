@@ -1,8 +1,10 @@
 //! A cargo subcommand to print information in a shell-convenient format.
 //!
-//! **[Crates.io](https://crates.io/crates/cargo-print) │ [Repo](https://github.com/alecmocatta/cargo-print)**
+//! <p style="font-family: 'Fira Sans',sans-serif;padding:0.3em 0"><strong>
+//! <a href="https://crates.io/crates/cargo-print">📦&nbsp;&nbsp;Crates.io</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://github.com/alecmocatta/cargo-print">📑&nbsp;&nbsp;GitHub</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://constellation.zulipchat.com/#narrow/stream/213236-subprojects">💬&nbsp;&nbsp;Chat</a>
+//! </strong></p>
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.3")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.4")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
@@ -14,7 +16,7 @@
 	unused_results,
 	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
-#![allow(clippy::if_not_else)]
+#![allow(clippy::if_not_else, clippy::too_many_lines)]
 
 use cargo_metadata::{CargoOpt, MetadataCommand};
 use std::{
@@ -23,7 +25,7 @@ use std::{
 
 fn main() {
 	let mut args = env::args().skip(2);
-	match args.next().as_ref().map(String::as_str) {
+	match args.next().as_deref() {
 		Some("examples") => print_examples(args),
 		Some("publish") => print_publish(args),
 		Some("package") => print_package(args),
