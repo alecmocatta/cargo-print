@@ -2,9 +2,9 @@
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-print.svg?maxAge=86400)](https://crates.io/crates/cargo-print)
 [![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/cargo-print.svg?maxAge=2592000)](#License)
-[![Build Status](https://dev.azure.com/alecmocatta/cargo-print/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/cargo-print/_build/latest?branchName=master)
+[![Build Status](https://dev.azure.com/alecmocatta/cargo-print/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/cargo-print/_build?definitionId=22)
 
-[Docs](https://docs.rs/cargo-print/0.1.3)
+[📖 Docs](https://docs.rs/cargo-print) | [💬 Chat](https://constellation.zulipchat.com/#narrow/stream/213236-subprojects)
 
 A cargo subcommand to print information in a shell-convenient format. Useful for CI.
 

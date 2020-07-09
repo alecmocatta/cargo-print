@@ -1,8 +1,10 @@
 //! A cargo subcommand to print information in a shell-convenient format.
 //!
-//! **[Crates.io](https://crates.io/crates/cargo-print) │ [Repo](https://github.com/alecmocatta/cargo-print)**
+//! <p style="font-family: 'Fira Sans',sans-serif;padding:0.3em 0"><strong>
+//! <a href="https://crates.io/crates/cargo-print">📦&nbsp;&nbsp;Crates.io</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://github.com/alecmocatta/cargo-print">📑&nbsp;&nbsp;GitHub</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://constellation.zulipchat.com/#narrow/stream/213236-subprojects">💬&nbsp;&nbsp;Chat</a>
+//! </strong></p>
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.3")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.4")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
