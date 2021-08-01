@@ -4,7 +4,7 @@
 //! <a href="https://crates.io/crates/cargo-print">📦&nbsp;&nbsp;Crates.io</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://github.com/alecmocatta/cargo-print">📑&nbsp;&nbsp;GitHub</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://constellation.zulipchat.com/#narrow/stream/213236-subprojects">💬&nbsp;&nbsp;Chat</a>
 //! </strong></p>
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.4")]
+#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.5")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
