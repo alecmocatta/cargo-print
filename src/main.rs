@@ -30,8 +30,9 @@ fn main() {
 		Some("publish") => print_publish(args),
 		Some("package") => print_package(args),
 		Some("directory") => print_directory(args),
+		Some("host") => print_host(args),
 		_ => {
-			eprintln!("USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish\n    cargo print package\n    cargo print directory <package-name>");
+			eprintln!("USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish\n    cargo print package\n    cargo print directory <package-name>\n    cargo print host");
 			process::exit(1);
 		}
 	}
@@ -57,7 +58,7 @@ fn print_directory(mut args: impl Iterator<Item = String>) {
 	let package = package.into_iter().next().unwrap();
 	let mut manifest_path = package.manifest_path;
 	let _ = manifest_path.pop();
-	println!("{}", manifest_path.display());
+	println!("{}", manifest_path);
 }
 
 fn print_package(mut args: impl Iterator<Item = String>) {
@@ -258,4 +259,12 @@ fn print_examples(mut args: impl Iterator<Item = String>) {
 	for example in examples {
 		println!("{}", example);
 	}
+}
+
+fn print_host(mut args: impl Iterator<Item = String>) {
+	if args.next().is_some() {
+		eprintln!("USAGE:\n    cargo print host");
+		process::exit(1);
+	}
+	println!("{}", env!("HOST"));
 }
