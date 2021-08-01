@@ -20,6 +20,8 @@ cargo print package
 # prints the name of the package in the current directory
 cargo print directory <package-name>
 # prints the directory of the specified package
+cargo print host
+# prints rustc's host triple
 ```
 
 ## License

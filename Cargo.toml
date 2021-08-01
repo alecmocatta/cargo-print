@@ -1,6 +1,6 @@
 [package]
 name = "cargo-print"
-version = "0.1.4"
+version = "0.1.5"
 license = "MIT OR Apache-2.0"
 authors = ["Alec Mocatta <alec@mocatta.net>"]
 categories = []
@@ -19,4 +19,4 @@ azure-devops = { project = "alecmocatta/cargo-print", pipeline = "tests", build 
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-cargo_metadata = "0.10"
+cargo_metadata = "0.14"
