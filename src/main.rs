@@ -4,7 +4,6 @@
 //! <a href="https://crates.io/crates/cargo-print">📦&nbsp;&nbsp;Crates.io</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://github.com/alecmocatta/cargo-print">📑&nbsp;&nbsp;GitHub</a>&nbsp;&nbsp;│&nbsp;&nbsp;<a href="https://constellation.zulipchat.com/#narrow/stream/213236-subprojects">💬&nbsp;&nbsp;Chat</a>
 //! </strong></p>
 
-#![doc(html_root_url = "https://docs.rs/cargo-print/0.1.5")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
@@ -20,8 +19,9 @@
 
 use cargo_metadata::{CargoOpt, MetadataCommand};
 use std::{
-	collections::{HashMap, HashSet, VecDeque}, env, process
+	collections::{BTreeSet, HashMap, HashSet, VecDeque}, env, process
 };
+use walkdir::WalkDir;
 
 fn main() {
 	let mut args = env::args().skip(2);
@@ -30,13 +30,33 @@ fn main() {
 		Some("publish") => print_publish(args),
 		Some("package") => print_package(args),
 		Some("directory") => print_directory(args),
+		Some("workspaces") => print_workspaces(args),
 		Some("host") => print_host(args),
 		_ => {
 			eprintln!(
-				"USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish\n    cargo print package\n    cargo print directory <package-name>\n    cargo print host"
+				"USAGE:\n    cargo print examples [--no-default-features] [--features <FEATURES>...] [--all-features]\n    cargo print publish\n    cargo print package\n    cargo print directory <package-name>\n    cargo print workspaces\n    cargo print host"
 			);
 			process::exit(1);
 		}
+	}
+}
+
+fn print_workspaces(mut args: impl Iterator<Item = String>) {
+	if args.next().is_some() {
+		eprintln!("USAGE:\n    cargo print workspaces");
+		process::exit(1);
+	}
+	let cwd = env::current_dir().unwrap();
+	let workspaces = WalkDir::new(".")
+		.into_iter()
+		.filter_map(|entry| {
+			let entry = entry.expect("couldn't recurse fs");
+			(entry.file_type().is_file() && entry.file_name() == "Cargo.toml")
+				.then(|| MetadataCommand::new().manifest_path(entry.path()).exec().unwrap().workspace_root.strip_prefix(&cwd).unwrap().to_owned())
+		})
+		.collect::<BTreeSet<_>>();
+	for workspace in workspaces {
+		println!("{}", workspace);
 	}
 }
 
@@ -50,9 +70,7 @@ fn print_directory(mut args: impl Iterator<Item = String>) {
 	let metadata = MetadataCommand::new().exec().unwrap();
 	let package = metadata.packages.into_iter().filter(|package| package.name == package_name).collect::<Vec<_>>();
 	assert!(package.len() <= 1);
-	if package.is_empty() {
-		panic!("package {} not found", package_name);
-	}
+	assert!(package.len() == 1, "package {} not found", package_name);
 	let package = package.into_iter().next().unwrap();
 	let mut manifest_path = package.manifest_path;
 	let _ = manifest_path.pop();
@@ -68,12 +86,8 @@ fn print_package(mut args: impl Iterator<Item = String>) {
 	let current_manifest = current_dir.join("Cargo.toml");
 	let metadata = MetadataCommand::new().exec().unwrap();
 	let package = metadata.packages.into_iter().filter(|package| package.manifest_path == current_manifest).collect::<Vec<_>>();
-	if package.len() > 1 {
-		panic!("We seem to be in > 1 package {:?}", package);
-	}
-	if package.is_empty() {
-		panic!("We don't seem to be in a package");
-	}
+	assert!(package.len() <= 1, "We seem to be in > 1 package {:?}", package);
+	assert!(package.len() == 1, "We don't seem to be in a package");
 	let package = package.into_iter().next().unwrap();
 	println!("{}", package.name);
 }
@@ -157,12 +171,8 @@ fn print_examples(mut args: impl Iterator<Item = String>) {
 	}
 	let metadata = metadata.exec().unwrap();
 	let package = metadata.packages.into_iter().filter(|package| package.manifest_path == current_manifest).collect::<Vec<_>>();
-	if package.len() > 1 {
-		panic!("We seem to be in > 1 package {:?}", package);
-	}
-	if package.is_empty() {
-		panic!("We don't seem to be in a package");
-	}
+	assert!(package.len() <= 1, "We seem to be in > 1 package {:?}", package);
+	assert!(package.len() == 1, "We don't seem to be in a package");
 	let package = package.into_iter().next().unwrap();
 	let features = package
 		.dependencies
