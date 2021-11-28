@@ -1,6 +1,6 @@
 [package]
 name = "cargo-print"
-version = "0.1.5"
+version = "0.1.6"
 license = "MIT OR Apache-2.0"
 authors = ["Alec Mocatta <alec@mocatta.net>"]
 categories = []
@@ -20,3 +20,4 @@ maintenance = { status = "passively-maintained" }
 
 [dependencies]
 cargo_metadata = "0.14"
+walkdir = "2"
